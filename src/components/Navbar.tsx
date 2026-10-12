@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import GlassButton from "./GlassButton";
 
@@ -29,12 +30,22 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6">
-        <Link href="#top" className="flex items-center gap-2">
-          <span className="text-[17px] font-semibold tracking-[0.08em] text-neutral-950">
-            THERMONEXT
-          </span>
-          <span className="hidden text-[11px] font-medium tracking-wide text-neutral-500 sm:inline">
-            Gebäudetechnik
+        <Link href="#top" className="flex items-center gap-2.5">
+          <Image
+            src="/logo-icon.png"
+            alt="Thermonext Logo"
+            width={32}
+            height={32}
+            className="h-8 w-8"
+            priority
+          />
+          <span className="flex flex-col leading-none">
+            <span className="text-[16px] font-semibold tracking-[0.06em] text-neutral-950">
+              THERMONEXT
+            </span>
+            <span className="hidden text-[10px] font-medium tracking-wide text-neutral-500 sm:inline">
+              Gebäudetechnik
+            </span>
           </span>
         </Link>
 
