@@ -10,22 +10,14 @@ export default function Footer() {
   return (
     <footer className="border-t border-neutral-900/[0.06] py-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-center sm:flex-row sm:justify-between sm:text-left">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center">
           <Image
-            src="/logo-icon.png"
-            alt="Thermonext Logo"
-            width={28}
-            height={28}
-            className="h-7 w-7"
+            src="/logo.png"
+            alt="Thermonext Gebäudetechnik GmbH"
+            width={760}
+            height={244}
+            className="h-8 w-auto"
           />
-          <div>
-            <p className="text-sm font-semibold tracking-[0.08em] text-neutral-900">
-              THERMONEXT
-            </p>
-            <p className="mt-0.5 text-xs text-neutral-500">
-              Gebäudetechnik GmbH — Heizung · Sanitär · Klima
-            </p>
-          </div>
         </div>
 
         <nav className="flex items-center gap-6 text-xs font-medium text-neutral-500">

@@ -30,23 +30,15 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6">
-        <Link href="#top" className="flex items-center gap-2.5">
+        <Link href="#top" className="flex items-center">
           <Image
-            src="/logo-icon.png"
-            alt="Thermonext Logo"
-            width={32}
-            height={32}
-            className="h-8 w-8"
+            src="/logo.png"
+            alt="Thermonext Gebäudetechnik GmbH"
+            width={760}
+            height={244}
+            className="h-9 w-auto"
             priority
           />
-          <span className="flex flex-col leading-none">
-            <span className="text-[16px] font-semibold tracking-[0.06em] text-neutral-950">
-              THERMONEXT
-            </span>
-            <span className="hidden text-[10px] font-medium tracking-wide text-neutral-500 sm:inline">
-              Gebäudetechnik
-            </span>
-          </span>
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
