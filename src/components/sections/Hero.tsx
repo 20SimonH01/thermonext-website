@@ -67,8 +67,8 @@ export default function Hero() {
           transition={{ duration: 0.9, delay: 0.34, ease: [0.22, 1, 0.36, 1] }}
           className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center"
         >
-          <GlassButton href="#kontakt">Kostenlose Erstberatung</GlassButton>
-          <GlassButton href="#leistungen" variant="ghost">
+          <GlassButton href="/#kontakt">Jetzt Termin sichern</GlassButton>
+          <GlassButton href="/#leistungen" variant="ghost">
             Leistungen ansehen
           </GlassButton>
         </motion.div>

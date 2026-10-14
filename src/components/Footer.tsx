@@ -27,9 +27,9 @@ export default function Footer() {
           <Link href="/datenschutz" className="hover:text-neutral-900">
             Datenschutz
           </Link>
-          <a href="#kontakt" className="hover:text-neutral-900">
+          <Link href="/#kontakt" className="hover:text-neutral-900">
             Kontakt
-          </a>
+          </Link>
         </nav>
 
         <p className="text-xs text-neutral-400">

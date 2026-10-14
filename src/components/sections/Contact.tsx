@@ -2,13 +2,17 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { CalendarClock, MessageSquare, Phone } from "lucide-react";
 import ScrollReveal from "../ScrollReveal";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/constants";
 
 const SERVICES = ["Heizung", "Sanitär", "Klima", "Sonstiges / Sanierung"];
 
 type Status = "idle" | "loading" | "success" | "error";
+type Tab = "formular" | "termin";
 
 export default function Contact() {
+  const [tab, setTab] = useState<Tab>("formular");
   const [status, setStatus] = useState<Status>("idle");
   const [consent, setConsent] = useState(false);
 
@@ -57,7 +61,69 @@ export default function Contact() {
           </p>
         </ScrollReveal>
 
-        <ScrollReveal delay={0.1} className="mt-12">
+        <ScrollReveal delay={0.1} className="mt-10 flex justify-center">
+          <div className="glass-panel inline-flex gap-1 rounded-full p-1.5">
+            <button
+              type="button"
+              onClick={() => setTab("formular")}
+              className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
+                tab === "formular"
+                  ? "bg-neutral-950 text-white"
+                  : "text-neutral-600 hover:text-neutral-900"
+              }`}
+            >
+              <MessageSquare className="h-4 w-4" strokeWidth={1.75} />
+              Formular
+            </button>
+            <button
+              type="button"
+              onClick={() => setTab("termin")}
+              className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
+                tab === "termin"
+                  ? "bg-neutral-950 text-white"
+                  : "text-neutral-600 hover:text-neutral-900"
+              }`}
+            >
+              <CalendarClock className="h-4 w-4" strokeWidth={1.75} />
+              Termin buchen
+            </button>
+          </div>
+        </ScrollReveal>
+
+        {tab === "termin" ? (
+          <ScrollReveal delay={0.15} className="mt-8">
+            <div className="glass-panel flex flex-col items-center gap-5 rounded-3xl p-10 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-950 text-white">
+                <CalendarClock className="h-6 w-6" strokeWidth={1.75} />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-neutral-950">
+                  Online-Terminbuchung folgt in Kürze
+                </h3>
+                <p className="mx-auto mt-3 max-w-sm text-balance text-sm leading-relaxed text-neutral-600">
+                  Bald können Sie hier direkt einen freien Termin aus unserem
+                  Kalender wählen. Bis dahin erreichen Sie uns am schnellsten
+                  telefonisch oder über das Formular.
+                </p>
+              </div>
+              <a
+                href={PHONE_HREF}
+                className="glass-btn mt-2 inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-medium"
+              >
+                <Phone className="h-4 w-4" strokeWidth={1.75} />
+                {PHONE_DISPLAY}
+              </a>
+              <button
+                type="button"
+                onClick={() => setTab("formular")}
+                className="text-sm font-medium text-neutral-600 underline underline-offset-2 hover:text-neutral-900"
+              >
+                Stattdessen Formular nutzen
+              </button>
+            </div>
+          </ScrollReveal>
+        ) : (
+        <ScrollReveal delay={0.1} className="mt-8">
           <form
             onSubmit={handleSubmit}
             className="glass-panel rounded-3xl p-6 sm:p-10"
@@ -178,6 +244,7 @@ export default function Contact() {
             )}
           </form>
         </ScrollReveal>
+        )}
       </div>
     </section>
   );

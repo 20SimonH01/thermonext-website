@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Phone } from "lucide-react";
 import GlassButton from "./GlassButton";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/constants";
 
 const LINKS = [
-  { href: "#leistungen", label: "Leistungen" },
-  { href: "#referenzen", label: "Referenzen" },
-  { href: "#team", label: "Über uns" },
-  { href: "#kontakt", label: "Kontakt" },
+  { href: "/#leistungen", label: "Leistungen" },
+  { href: "/#referenzen", label: "Referenzen" },
+  { href: "/#team", label: "Über uns" },
+  { href: "/#kontakt", label: "Kontakt" },
 ];
 
 export default function Navbar() {
@@ -30,7 +32,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6">
-        <Link href="#top" className="flex items-center">
+        <Link href="/" className="flex items-center">
           <Image
             src="/logo.png"
             alt="Thermonext Gebäudetechnik GmbH"
@@ -54,8 +56,16 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden md:block">
-          <GlassButton href="#kontakt" className="!px-5 !py-2.5 !text-[13px]">
+        <div className="hidden items-center gap-3 md:flex">
+          <a
+            href={PHONE_HREF}
+            aria-label={`Anrufen: ${PHONE_DISPLAY}`}
+            title={`Anrufen: ${PHONE_DISPLAY}`}
+            className="glass-btn-ghost flex h-11 w-11 items-center justify-center rounded-full"
+          >
+            <Phone className="h-4 w-4" strokeWidth={1.75} />
+          </a>
+          <GlassButton href="/#kontakt" className="!px-5 !py-2.5 !text-[13px]">
             Termin anfragen
           </GlassButton>
         </div>
@@ -88,6 +98,13 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
+          <a
+            href={PHONE_HREF}
+            className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-black/[0.03]"
+          >
+            <Phone className="h-4 w-4" strokeWidth={1.75} />
+            {PHONE_DISPLAY}
+          </a>
         </div>
       )}
     </header>
