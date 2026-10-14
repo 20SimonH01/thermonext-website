@@ -78,7 +78,7 @@ export default function CookieConsent() {
   };
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[60] p-4 sm:p-6">
+    <div className="fixed inset-x-0 bottom-0 z-[60] p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:p-6 sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
       <div className="glass-panel mx-auto max-w-2xl rounded-3xl p-6">
         <p className="text-sm font-semibold text-neutral-900">
           Diese Website respektiert Ihre Privatsphäre

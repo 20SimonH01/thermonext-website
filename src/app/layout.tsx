@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -15,10 +15,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Steuert, wie die Seite auf jedem Endgerät skaliert wird (iPhone, Android,
+// Tablet, Desktop). Nutzer können weiterhin per Pinch-Zoom vergrößern
+// (maximumScale bewusst nicht eingeschränkt — Barrierefreiheit).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#ffffff",
+  colorScheme: "light",
+};
+
 export const metadata: Metadata = {
   title: "Thermonext Gebäudetechnik GmbH | Heizung · Sanitär · Klima",
   description:
     "Thermonext plant, installiert und wartet Heizungs-, Sanitär- und Klimasysteme für Privat, Gewerbe und öffentliche Auftraggeber. Meisterqualität, klare Kommunikation, saubere Ausführung.",
+  manifest: "/site.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Thermonext",
+    statusBarStyle: "default",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

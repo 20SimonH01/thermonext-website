@@ -13,7 +13,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-[100svh] items-center overflow-hidden pt-28"
+      className="relative flex min-h-screen min-h-[100svh] items-center overflow-hidden pt-28"
     >
       {/* ambient liquid blobs — monochrome depth behind the glass */}
       <div className="pointer-events-none absolute inset-0 mesh-bg" />

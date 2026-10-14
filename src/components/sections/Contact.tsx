@@ -149,7 +149,7 @@ export default function Contact() {
                   required
                   minLength={2}
                   type="text"
-                  className="rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-sm text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2"
+                  className="rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-base text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2 sm:text-sm"
                   placeholder="Ihr Name"
                 />
               </div>
@@ -163,7 +163,7 @@ export default function Contact() {
                   name="email"
                   required
                   type="email"
-                  className="rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-sm text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2"
+                  className="rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-base text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2 sm:text-sm"
                   placeholder="ihre@email.de"
                 />
               </div>
@@ -177,7 +177,7 @@ export default function Contact() {
                 id="service"
                 name="service"
                 defaultValue=""
-                className="rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-sm text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2"
+                className="rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-base text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2 sm:text-sm"
               >
                 <option value="" disabled>
                   Bitte wählen
@@ -200,7 +200,7 @@ export default function Contact() {
                 required
                 minLength={5}
                 rows={4}
-                className="resize-none rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-sm text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2"
+                className="resize-none rounded-xl border border-neutral-900/10 bg-white/70 px-4 py-3 text-base text-neutral-900 outline-none ring-neutral-900/20 transition focus:ring-2 sm:text-sm"
                 placeholder="Wie können wir helfen?"
               />
             </div>

@@ -28,7 +28,9 @@ export default function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled ? "glass-nav py-3" : "bg-transparent py-5"
+        scrolled
+          ? "glass-nav pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))]"
+          : "bg-transparent pb-5 pt-[calc(1.25rem+env(safe-area-inset-top))]"
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6">
