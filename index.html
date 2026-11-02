@@ -123,8 +123,14 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
    läuft dort. Beim ersten Aufruf fliegt es einmal aus einer Nahaufnahme an
    diese Stelle; die Animation sitzt auf .hero-wp-flug, damit sie die
    Positionierung nicht überschreibt. */
-.hero-wp{position:absolute;right:1.5rem;top:50%;z-index:1;
-  width:clamp(190px,27%,350px);pointer-events:none;transform:translateY(-58%)}
+/* Das Gerät bleibt dort stehen, wo der Flug endet: groß in der Bildmitte,
+   hinter der Überschrift. Nach der Landung tritt es zurück, damit der Text
+   lesbar bleibt; während des Flugs ist es voll sichtbar. */
+.hero-wp{position:absolute;left:50%;top:50%;z-index:0;
+  width:min(36vw,520px);pointer-events:none;transform:translate(-50%,-52%);
+  opacity:.3;transition:opacity 1.1s cubic-bezier(.16,1,.3,1)}
+/* alles andere im Hero liegt darüber */
+#top > .relative > *:not(.hero-wp){position:relative;z-index:1}
 .hero-wp-flug{position:relative;will-change:transform,filter}
 .hero-wp-geraet svg{display:block;width:100%;height:auto}
 /* Drehpunkt auf der Nabe, nicht in der Mitte der Zeichenfläche: sonst
@@ -139,9 +145,8 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
   pointer-events:none}
 .wp-fliegt{z-index:60}
 @media (max-width:767px){
-  /* hochkant ist neben der Überschrift kein Platz. Es passt nur neben
-     die Zeile darüber, also klein und oberhalb der Überschrift. */
-  .hero-wp{width:108px;top:-2rem;right:1.25rem;transform:none}
+  /* hochkant braucht die Überschrift den ganzen Platz, also blasser */
+  .hero-wp{width:min(66vw,320px);opacity:.2}
 }
 @media (prefers-reduced-motion:reduce){
   .wp-fluegel{animation:none}
@@ -554,6 +559,8 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
     flug.style.transformOrigin=(nx-fr.left).toFixed(1)+'px '+(ny-fr.top).toFixed(1)+'px';
     var TX=innerWidth/2-nx, TY=innerHeight/2-ny;
 
+    wp.style.opacity='1';
+
     var grund=document.createElement('div');
     grund.className='wp-grund';
     document.body.appendChild(grund);
@@ -564,6 +571,7 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
       if(fertig)return; fertig=true;
       if(raf)cancelAnimationFrame(raf);
       flug.style.transform=''; flug.style.filter=''; flug.style.transformOrigin='';
+      wp.style.opacity='';          /* blendet auf den Ruhewert zurück */
       grund.remove();
       wp.classList.remove('wp-fliegt');
       removeEventListener('keydown',landen);
