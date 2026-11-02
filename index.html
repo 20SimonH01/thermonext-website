@@ -126,6 +126,27 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
 /* Das Gerät gehört zum Vorspann, nicht zum Layout: es ist erst da, wenn
    das Skript es einschaltet, fliegt einmal durchs Bild und verschwindet.
    Ohne JavaScript bleibt der Hero unverändert. */
+/* Strömungspuls: schießt auf Höhe der Nabe durchs Bild, als liefe etwas
+   durch eine Leitung. Gleicher Takt und gleiche Kurve wie der Vorspann. */
+/* Höhe 0, damit die Linie exakt auf der Mitte sitzt. Kein overflow:hidden:
+   das würde den Puls, der oberhalb und unterhalb herausragt, wegschneiden.
+   Horizontal scrollt nichts, weil er per transform verschoben wird. */
+.wp-strom{position:fixed;left:0;right:0;top:50%;height:0;z-index:61;
+  pointer-events:none}
+.wp-strom i{position:absolute;left:0;top:-2.5px;height:5px;width:36vw;
+  border-radius:999px;transform:translate3d(var(--x,-42vw),0,0);
+  will-change:transform;filter:blur(.5px);
+  /* heller Kopf vor dunklem Schweif: so hebt sich der Puls sowohl vom
+     weißen Grund als auch vom dunklen Lüfterrad ab */
+  background:linear-gradient(90deg,transparent,
+    rgba(160,162,166,.25) 38%,rgba(90,92,96,.6) 68%,
+    rgba(10,10,10,.92) 90%,rgba(255,255,255,.98) 97.5%,transparent)}
+/* weicher Schein um den Puls */
+.wp-strom i::after{content:"";position:absolute;inset:-9px -4px;
+  border-radius:999px;background:inherit;filter:blur(11px);opacity:.6}
+@media (max-width:767px){
+  .wp-strom i{width:52vw;height:3px;top:-1.5px}
+}
 .hero-wp{display:none}
 .hero-wp.wp-an{display:block;position:fixed;left:50%;top:50%;z-index:60;
   width:min(36vw,520px);pointer-events:none;transform:translate(-50%,-50%)}
@@ -565,12 +586,19 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
     grund.className='wp-grund';
     document.body.appendChild(grund);
 
+    var strom=document.createElement('div');
+    strom.className='wp-strom';
+    strom.innerHTML='<i></i>';
+    document.body.appendChild(strom);
+    var puls=strom.firstChild;
+
     var fertig=false, raf=null;
     function landen(){
       if(fertig)return; fertig=true;
       if(raf)cancelAnimationFrame(raf);
       wp.remove();
       grund.remove();
+      strom.remove();
       removeEventListener('keydown',landen);
       removeEventListener('wheel',landen);
       removeEventListener('touchstart',landen);
@@ -601,7 +629,11 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
 
       setzen(e,tempo);
       grund.style.opacity=(1-sanft((t-GRUND_AB)/(1-GRUND_AB))).toFixed(3);
-      wp.style.opacity=(1-sanft((t-GERAET_AB)/(1-GERAET_AB))).toFixed(3);
+      var w=(1-sanft((t-GERAET_AB)/(1-GERAET_AB)));
+      wp.style.opacity=w.toFixed(3);
+      /* derselbe Verlauf wie die Kamera, damit beides zusammengehört */
+      puls.style.setProperty('--x',(-42+e*146).toFixed(1)+'vw');
+      strom.style.opacity=w.toFixed(3);
 
       if(t<1)raf=requestAnimationFrame(bild); else landen();
     }
