@@ -126,19 +126,6 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
 /* Das Gerät gehört zum Vorspann, nicht zum Layout: es ist erst da, wenn
    das Skript es einschaltet, fliegt einmal durchs Bild und verschwindet.
    Ohne JavaScript bleibt der Hero unverändert. */
-/* Strömung: Wellen laufen aus der Lüfternabe heraus auf den Betrachter
-   zu. Jeder Ring trägt einen dunklen und einen hellen Saum, damit er sich
-   sowohl vom weißen Grund als auch vom dunklen Lüfterrad abhebt. */
-.wp-strom{position:fixed;inset:0;z-index:61;pointer-events:none;
-  display:grid;place-items:center;overflow:hidden}
-.wp-strom i{position:absolute;width:30vmin;height:30vmin;border-radius:50%;
-  opacity:0;will-change:transform,opacity;filter:blur(1.6px);
-  background:radial-gradient(circle,transparent 55%,
-    rgba(10,10,10,.32) 67%,rgba(255,255,255,.62) 75%,
-    rgba(160,162,166,.18) 82%,transparent 90%)}
-@media (max-width:767px){
-  .wp-strom i{width:44vmin;height:44vmin;filter:blur(1.2px)}
-}
 .hero-wp{display:none}
 .hero-wp.wp-an{display:block;position:fixed;left:50%;top:50%;z-index:60;
   width:min(36vw,520px);pointer-events:none;transform:translate(-50%,-50%)}
@@ -551,7 +538,7 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
       },{threshold:0}).observe(wp);
     }
 
-    var DAUER=1400, NAEHE=8.5, UNSCHAERFE=1.3;
+    var DAUER=1100, NAEHE=8.5, UNSCHAERFE=1.3;
     /* Der weiße Grund geht früher als das Gerät: so klingt es über dem
        schon sichtbaren Hero aus, statt mit ihm zusammen wegzuschalten. */
     var GRUND_AB=.42, GERAET_AB=.52;
@@ -578,19 +565,12 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
     grund.className='wp-grund';
     document.body.appendChild(grund);
 
-    var strom=document.createElement('div');
-    strom.className='wp-strom';
-    strom.innerHTML='<i></i><i></i><i></i>';
-    document.body.appendChild(strom);
-    var wellen=[].slice.call(strom.children);
-
     var fertig=false, raf=null;
     function landen(){
       if(fertig)return; fertig=true;
       if(raf)cancelAnimationFrame(raf);
       wp.remove();
       grund.remove();
-      strom.remove();
       removeEventListener('keydown',landen);
       removeEventListener('wheel',landen);
       removeEventListener('touchstart',landen);
@@ -621,17 +601,7 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
 
       setzen(e,tempo);
       grund.style.opacity=(1-sanft((t-GRUND_AB)/(1-GRUND_AB))).toFixed(3);
-      var w=(1-sanft((t-GERAET_AB)/(1-GERAET_AB)));
-      wp.style.opacity=w.toFixed(3);
-      /* Drei Wellen, zeitlich versetzt. Sie wachsen beschleunigt, wie
-         etwas, das sich mit gleichbleibendem Tempo nähert, und gehen in
-         der Deckkraft weich auf und wieder ab. */
-      for(var i=0;i<3;i++){
-        var lt=(t-i*.26)/.68;
-        if(lt<0||lt>1){wellen[i].style.opacity='0';continue}
-        wellen[i].style.transform='scale('+(.1+lt*lt*3.3).toFixed(3)+')';
-        wellen[i].style.opacity=(Math.sin(lt*Math.PI)*.9*w).toFixed(3);
-      }
+      wp.style.opacity=(1-sanft((t-GERAET_AB)/(1-GERAET_AB))).toFixed(3);
 
       if(t<1)raf=requestAnimationFrame(bild); else landen();
     }
