@@ -123,14 +123,12 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
    läuft dort. Beim ersten Aufruf fliegt es einmal aus einer Nahaufnahme an
    diese Stelle; die Animation sitzt auf .hero-wp-flug, damit sie die
    Positionierung nicht überschreibt. */
-/* Das Gerät bleibt dort stehen, wo der Flug endet: groß in der Bildmitte,
-   hinter der Überschrift. Nach der Landung tritt es zurück, damit der Text
-   lesbar bleibt; während des Flugs ist es voll sichtbar. */
-.hero-wp{position:absolute;left:50%;top:50%;z-index:0;
-  width:min(36vw,520px);pointer-events:none;transform:translate(-50%,-52%);
-  opacity:.3;transition:opacity 1.1s cubic-bezier(.16,1,.3,1)}
-/* alles andere im Hero liegt darüber */
-#top > .relative > *:not(.hero-wp){position:relative;z-index:1}
+/* Das Gerät gehört zum Vorspann, nicht zum Layout: es ist erst da, wenn
+   das Skript es einschaltet, fliegt einmal durchs Bild und verschwindet.
+   Ohne JavaScript bleibt der Hero unverändert. */
+.hero-wp{display:none}
+.hero-wp.wp-an{display:block;position:fixed;left:50%;top:50%;z-index:60;
+  width:min(36vw,520px);pointer-events:none;transform:translate(-50%,-50%)}
 .hero-wp-flug{position:relative;will-change:transform,filter}
 .hero-wp-geraet svg{display:block;width:100%;height:auto}
 /* Drehpunkt auf der Nabe, nicht in der Mitte der Zeichenfläche: sonst
@@ -143,10 +141,8 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
 /* weißer Grund für den Einflug, blendet zum Schluss aus */
 .wp-grund{position:fixed;inset:0;z-index:40;background:var(--background);
   pointer-events:none}
-.wp-fliegt{z-index:60}
 @media (max-width:767px){
-  /* hochkant braucht die Überschrift den ganzen Platz, also blasser */
-  .hero-wp{width:min(66vw,320px);opacity:.2}
+  .hero-wp.wp-an{width:min(68vw,330px)}
 }
 @media (prefers-reduced-motion:reduce){
   .wp-fluegel{animation:none}
@@ -542,7 +538,7 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
       },{threshold:0}).observe(wp);
     }
 
-    var DAUER=750, NAEHE=8.5, UNSCHAERFE=1.3, UEBERGANG=.63;
+    var DAUER=950, NAEHE=8.5, UNSCHAERFE=1.3, UEBERGANG=.63;
 
     if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     try{ if(sessionStorage.getItem('tnxIntro'))return;
@@ -550,30 +546,27 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
     if(location.hash)return;
     if(!nabe)return;
 
-    var r=nabe.getBoundingClientRect(), fr=flug.getBoundingClientRect();
-    if(!r.width||!fr.width)return;
+    wp.classList.add('wp-an');
 
-    /* Drehpunkt auf die Nabe legen: dann bleibt sie beim Skalieren stehen
-       und die Verschiebung bringt sie genau in die Bildmitte. */
+    var r=nabe.getBoundingClientRect(), fr=flug.getBoundingClientRect();
+    if(!r.width||!fr.width){wp.remove();return}
+
+    /* Drehpunkt auf die Nabe: beim Zurückziehen bleibt sie im Bild stehen,
+       statt aus der Mitte zu wandern. */
     var nx=r.left+r.width/2, ny=r.top+r.height/2;
     flug.style.transformOrigin=(nx-fr.left).toFixed(1)+'px '+(ny-fr.top).toFixed(1)+'px';
     var TX=innerWidth/2-nx, TY=innerHeight/2-ny;
 
-    wp.style.opacity='1';
-
     var grund=document.createElement('div');
     grund.className='wp-grund';
     document.body.appendChild(grund);
-    wp.classList.add('wp-fliegt');
 
     var fertig=false, raf=null;
     function landen(){
       if(fertig)return; fertig=true;
       if(raf)cancelAnimationFrame(raf);
-      flug.style.transform=''; flug.style.filter=''; flug.style.transformOrigin='';
-      wp.style.opacity='';          /* blendet auf den Ruhewert zurück */
+      wp.remove();
       grund.remove();
-      wp.classList.remove('wp-fliegt');
       removeEventListener('keydown',landen);
       removeEventListener('wheel',landen);
       removeEventListener('touchstart',landen);
@@ -603,7 +596,10 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
           tempo=Math.min((naechst-e)/.016*.55,1)*UNSCHAERFE;
 
       setzen(e,tempo);
-      grund.style.opacity=t<UEBERGANG?1:(1-(t-UEBERGANG)/(1-UEBERGANG)).toFixed(3);
+      /* ab dem Übergang blenden Grund und Gerät zusammen aus */
+      var rest=t<UEBERGANG?1:(1-(t-UEBERGANG)/(1-UEBERGANG));
+      grund.style.opacity=rest.toFixed(3);
+      wp.style.opacity=rest.toFixed(3);
 
       if(t<1)raf=requestAnimationFrame(bild); else landen();
     }
