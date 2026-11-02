@@ -119,33 +119,40 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
 .heiz-viessmann img{object-position:50% 42%}
 .heiz-brenner img{object-position:50% 58%}
 .heiz-trovis img{object-position:50% 38%}
-/* Hero-Intro: die Kamera zieht vom laufenden Lüfterrad zurück und gibt den
-   Hero frei. Das Overlay wird vollständig per Skript eingefügt, damit die
-   Seite ohne JavaScript unverändert und vor allem sichtbar bleibt. */
-.intro{position:fixed;inset:0;z-index:80;background:var(--background);
-  display:grid;place-items:center;overflow:hidden;will-change:opacity}
-.intro-kamera{position:absolute;inset:0;display:grid;place-items:center;
-  transform:scale(var(--z,1));transform-origin:50% 46%;will-change:transform,filter}
-.intro-geraet{width:34%;min-width:160px;max-width:460px}
-.intro-geraet svg{display:block;width:100%;height:auto}
-/* Kopien hinter dem Gerät, nach außen größer und blasser: beim Rückzug
-   ergibt das die radiale Unschärfe, die ein gleichmäßiger Weichzeichner
-   nicht nachbildet. */
-.intro-streifen{position:absolute;inset:0;display:grid;place-items:center;
-  pointer-events:none;opacity:var(--streak,0)}
-.intro-streifen .intro-geraet{position:absolute;transform:scale(var(--s));
-  opacity:var(--o)}
-/* Die Kopien liegen ohnehin hinter dem Weichzeichner der Kamera. Ein
-   eigener Filter je Kopie und sechs mitdrehende Raeder kosten dort nur
-   Bilder pro Sekunde, ohne sichtbar etwas beizutragen. */
-.intro-streifen .intro-fluegel{animation:none}
-/* Drehpunkt auf der Nabe, nicht in der Mitte der Zeichenfläche */
-.intro-fluegel{transform-box:view-box;transform-origin:193px 108px;
-  animation:introDreh .3s linear infinite}
-@keyframes introDreh{to{transform:rotate(360deg)}}
+/* Außengerät im Hero. Es steht rechts neben der Überschrift und sein Rad
+   läuft dort. Beim ersten Aufruf fliegt es einmal aus einer Nahaufnahme an
+   diese Stelle; die Animation sitzt auf .hero-wp-flug, damit sie die
+   Positionierung nicht überschreibt. */
+.hero-wp{position:absolute;right:1.5rem;top:50%;z-index:1;
+  width:clamp(190px,27%,350px);pointer-events:none;transform:translateY(-58%)}
+.hero-wp-flug{position:relative;will-change:transform,filter}
+.hero-wp-bild{position:relative;overflow:hidden;border-radius:1.5rem;
+  box-shadow:0 1px 1px rgba(10,10,10,.03),0 24px 48px -20px rgba(10,10,10,.22)}
+.hero-wp-bild::after{content:"";position:absolute;inset:0;border-radius:inherit;
+  pointer-events:none;box-shadow:inset 0 0 0 1px rgba(196,197,200,.55)}
+.hero-wp-bild img{display:block;width:100%;height:auto}
+/* Kreisausschnitt genau innerhalb des Schutzgitters. Er trägt denselben
+   Bildausschnitt noch einmal und dreht sich um die Nabe; weil das Gitter
+   nahezu kreisrund ist, bleibt davon nur die Bewegung sichtbar. */
+.wp-rad{position:absolute;left:43.71%;top:49.85%;width:56.39%;aspect-ratio:1;
+  transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;pointer-events:none}
+.wp-rad-dreh{position:absolute;inset:0;animation:wpDreh .3s linear infinite}
+.wp-rad-dreh img{position:absolute;width:177.3%;max-width:none;left:-27.5%;top:-10.4%}
+/* außerhalb des Blickfelds angehalten, damit nichts im Leerlauf rechnet */
+.wp-ruht .wp-rad-dreh{animation-play-state:paused}
+@keyframes wpDreh{to{transform:rotate(360deg)}}
+/* weißer Grund für den Einflug, blendet zum Schluss aus */
+.wp-grund{position:fixed;inset:0;z-index:40;background:var(--background);
+  pointer-events:none}
+.wp-fliegt{z-index:60}
 @media (max-width:767px){
-  /* hochkant wirkt das Geraet bei 34% verloren */
-  .intro-geraet{width:62%;min-width:0;max-width:none}
+  /* hochkant ist neben der Überschrift kein Platz. Es passt nur neben
+     die Zeile darüber, also klein und oberhalb der Überschrift. */
+  .hero-wp{width:92px;top:-1.75rem;right:1.25rem;transform:none}
+  .hero-wp-bild{border-radius:.85rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .wp-rad-dreh{animation:none}
 }
 .ba{position:relative;overflow:hidden;border-radius:1.5rem;aspect-ratio:4/5;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:ew-resize;background:#e9eaeb;box-shadow:0 1px 1px rgba(10,10,10,.03),0 24px 48px -20px rgba(10,10,10,.22)}
 .ba::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(196,197,200,.55)}
@@ -198,6 +205,14 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
   <div class="blob -left-40 top-10 h-[420px] w-[420px] bg-[#a9abae]/35" style="animation:float1 14s ease-in-out infinite"></div>
   <div class="blob -right-32 top-48 h-[380px] w-[380px] bg-[#c4c5c8]/40" style="animation:float2 16s ease-in-out infinite"></div>
   <div class="relative mx-auto w-full max-w-6xl px-6">
+    <div class="hero-wp" id="heroWp" aria-hidden="true">
+      <div class="hero-wp-flug" id="heroWpFlug">
+        <div class="hero-wp-bild">
+          <img src="img/hero-aussengeraet.jpg" alt="" width="900" height="614" fetchpriority="high" decoding="async">
+          <div class="wp-rad"><div class="wp-rad-dreh"><img src="img/hero-aussengeraet.jpg" alt="" decoding="async"></div></div>
+        </div>
+      </div>
+    </div>
     <div class="rise glass-panel inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium tracking-wide text-neutral-600"><span class="h-1.5 w-1.5 rounded-full bg-neutral-900"></span>Heizung · Sanitär · Klima</div>
     <h1 class="rise mt-7 max-w-3xl text-balance text-5xl font-semibold leading-[1.05] tracking-tight text-neutral-950 sm:text-6xl md:text-7xl" style="animation-delay:.1s">Gebäudetechnik,<br>der Sie vertrauen können.</h1>
     <p class="rise mt-7 max-w-xl text-balance text-lg leading-relaxed text-neutral-600" style="animation-delay:.22s">Thermonext plant, installiert und wartet Heizungs-, Sanitär- und Klimasysteme — für Privat, Gewerbe und öffentliche Auftraggeber. Meisterqualität, klare Kommunikation, saubere Ausführung.</p>
@@ -517,105 +532,70 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
     if(t)kOpen(t);
   });
 
-  /* ---- Hero-Intro ----------------------------------------------------
-     Laeuft einmal pro Besuch. Ein Klick, eine Taste oder Scrollen bricht
-     ab; bei reduzierter Bewegung oder nach dem ersten Mal entfaellt es
-     ganz. Ein Notausgang raeumt das Overlay auch dann weg, wenn die
-     Animation haengt. */
+  /* ---- Außengerät im Hero --------------------------------------------
+     Das Gerät steht fest im Layout und sein Rad läuft dort. Beim ersten
+     Aufruf fliegt es einmal aus einer Nahaufnahme an seinen Platz: die
+     Kamera zieht vom Lüfterrad zurück. Danach bleibt nur die Drehung,
+     und die pausiert, sobald der Hero aus dem Blick ist. */
   (function(){
+    var wp=$('#heroWp');
+    if(!wp)return;
+    var flug=$('#heroWpFlug'), rad=wp.querySelector('.wp-rad');
+
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){
+        wp.classList.toggle('wp-ruht',!es[0].isIntersecting);
+      },{threshold:0}).observe(wp);
+    }
+
     var DAUER=750, NAEHE=8.5, UNSCHAERFE=1.3, UEBERGANG=.63;
 
     if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     try{ if(sessionStorage.getItem('tnxIntro'))return;
          sessionStorage.setItem('tnxIntro','1'); }catch(e){}
     if(location.hash)return;
+    if(!rad)return;
 
-    /* voll: ganzes Geraet. sonst: grobe Form, reicht fuer die unscharfen
-       Kopien und spart die Haelfte des Markups. */
-    function geraet(id,voll){
-      var s='<svg viewBox="0 0 300 220" aria-hidden="true"><defs>'
-        +'<linearGradient id="ig1-'+id+'" x1="0" y1="0" x2="1" y2="1">'
-        +'<stop offset="0" stop-color="#f6f6f7"/><stop offset=".38" stop-color="#d9dadd"/>'
-        +'<stop offset=".56" stop-color="#eceded"/><stop offset="1" stop-color="#bcbec2"/></linearGradient>'
-        +'<radialGradient id="ig3-'+id+'" cx=".5" cy=".5" r=".5">'
-        +'<stop offset="0" stop-color="#2f3135"/><stop offset=".72" stop-color="#15161a"/>'
-        +'<stop offset="1" stop-color="#0a0a0a"/></radialGradient></defs>'
-        +'<path d="M58 196h22v16H58zM220 196h22v16h-22z" fill="#9a9ca0"/>'
-        +'<rect x="18" y="20" width="264" height="176" rx="16" fill="url(#ig1-'+id+')"/>';
-      if(voll){
-        s+='<rect x="18.6" y="20.6" width="262.8" height="174.8" rx="15.4" fill="none" stroke="#9a9ca0" stroke-width="1.2"/>';
-        for(var y=40;y<=176;y+=11)
-          s+='<rect x="34" y="'+y+'" width="52" height="4" rx="2" fill="#a8aaae" opacity=".55"/>';
-      }
-      s+='<circle class="intro-nabe" cx="193" cy="108" r="74" fill="url(#ig3-'+id+')"/>'
-        +'<circle cx="193" cy="108" r="74" fill="none" stroke="#86888c" stroke-width="2.5"/>'
-        +'<g class="intro-fluegel">';
-      for(var i=0;i<3;i++)
-        s+='<path transform="rotate('+(i*120)+' 193 108)" fill="#4a4c51" opacity=".92" '
-          +'d="M193 108 C193 108 206 62 240 58 C250 92 222 104 193 108 Z"/>';
-      s+='<circle cx="193" cy="108" r="16" fill="#5c5e63"/>'
-        +'<circle cx="193" cy="108" r="7" fill="#303237"/></g>';
-      if(voll){
-        for(var r=20;r<=70;r+=12)
-          s+='<circle cx="193" cy="108" r="'+r+'" fill="none" stroke="#d2d4d7" stroke-width="1.6" opacity=".5"/>';
-        for(var k=0;k<12;k++){ var a=k*30*Math.PI/180;
-          s+='<line x1="'+(193+Math.cos(a)*16).toFixed(1)+'" y1="'+(108+Math.sin(a)*16).toFixed(1)
-            +'" x2="'+(193+Math.cos(a)*73).toFixed(1)+'" y2="'+(108+Math.sin(a)*73).toFixed(1)
-            +'" stroke="#d2d4d7" stroke-width="1.4" opacity=".4"/>'; }
-        s+='<rect x="34" y="166" width="34" height="12" rx="3" fill="#ffffff" opacity=".65"/>';
-      }
-      return s+'</svg>';
-    }
+    var r=rad.getBoundingClientRect(), fr=flug.getBoundingClientRect();
+    if(!r.width||!fr.width)return;
 
-    var streifen='';
-    for(var i=1;i<=4;i++){ var t=i/4;
-      streifen+='<div class="intro-geraet" style="--s:'+(1+t*.26).toFixed(3)
-        +';--o:'+(.3*(1-t)+.05).toFixed(3)+';--b:'+(t*5).toFixed(1)+'px">'
-        +geraet('s'+i,false)+'</div>'; }
+    /* Drehpunkt auf die Nabe legen: dann bleibt sie beim Skalieren stehen
+       und die Verschiebung bringt sie genau in die Bildmitte. */
+    var nx=r.left+r.width/2, ny=r.top+r.height/2;
+    flug.style.transformOrigin=(nx-fr.left).toFixed(1)+'px '+(ny-fr.top).toFixed(1)+'px';
+    var TX=innerWidth/2-nx, TY=innerHeight/2-ny;
 
-    var ov=document.createElement('div');
-    ov.className='intro';
-    ov.setAttribute('aria-hidden','true');
-    ov.innerHTML='<div class="intro-kamera"><div class="intro-streifen">'+streifen
-      +'</div><div class="intro-geraet">'+geraet('a',true)+'</div></div>';
-    document.body.appendChild(ov);
+    var grund=document.createElement('div');
+    grund.className='wp-grund';
+    document.body.appendChild(grund);
+    wp.classList.add('wp-fliegt');
 
-    var kam=ov.querySelector('.intro-kamera'),
-        str=ov.querySelector('.intro-streifen'),
-        fertig=false, raf=null;
-
-    function weg(){
+    var fertig=false, raf=null;
+    function landen(){
       if(fertig)return; fertig=true;
       if(raf)cancelAnimationFrame(raf);
-      ov.remove();
-      removeEventListener('keydown',weg);
-      removeEventListener('wheel',weg);
-      removeEventListener('touchstart',weg);
+      flug.style.transform=''; flug.style.filter=''; flug.style.transformOrigin='';
+      grund.remove();
+      wp.classList.remove('wp-fliegt');
+      removeEventListener('keydown',landen);
+      removeEventListener('wheel',landen);
+      removeEventListener('touchstart',landen);
     }
-    ov.addEventListener('click',weg);
-    addEventListener('keydown',weg);
-    addEventListener('wheel',weg,{passive:true});
-    addEventListener('touchstart',weg,{passive:true});
-    setTimeout(weg,DAUER+600);
+    addEventListener('keydown',landen);
+    addEventListener('wheel',landen,{passive:true});
+    addEventListener('touchstart',landen,{passive:true});
+    setTimeout(landen,DAUER+600);
 
-    /* Die Kamera muss auf das Lueterrad zoomen, nicht auf die Bildmitte:
-       die Nabe sitzt rechts davon, und wie weit, haengt vom Format ab.
-       Deshalb wird der Drehpunkt aus ihrer echten Lage berechnet. */
-    (function(){
-      var nabe=ov.querySelector('.intro-geraet .intro-nabe');
-      if(!nabe)return;
-      var r=nabe.getBoundingClientRect();
-      if(!r.width)return;
-      kam.style.transformOrigin=(r.left+r.width/2).toFixed(1)+'px '
-                               +(r.top+r.height/2).toFixed(1)+'px';
-    })();
+    function setzen(e,tempo){
+      flug.style.transform='translate('+(TX*(1-e)).toFixed(1)+'px,'
+        +(TY*(1-e)).toFixed(1)+'px) scale('+(NAEHE+(1-NAEHE)*e).toFixed(4)+')';
+      flug.style.filter=tempo>.05?'blur('+(tempo*7).toFixed(2)+'px)':'';
+    }
 
-    /* Startbild setzen und die Zeit erst mit dem ersten gezeichneten Bild
-       starten. Beim Laden liegen zwischen Skriptstart und erstem Bild
-       leicht mehrere hundert Millisekunden; sonst waere die Fahrt vorbei,
-       bevor etwas zu sehen ist. */
-    kam.style.setProperty('--z',NAEHE);
-    str.style.setProperty('--streak','0');
+    /* Die Zeit erst mit dem ersten gezeichneten Bild starten. Beim Laden
+       liegen dazwischen leicht mehrere hundert Millisekunden; sonst waere
+       der Flug vorbei, bevor etwas zu sehen ist. */
+    setzen(0,0);
 
     var start=null;
     function bild(jetzt){
@@ -625,13 +605,10 @@ body{background:var(--background);color:var(--foreground);font-family:'Geist',Ar
           naechst=1-Math.pow(1-Math.min(t+.016,1),3),
           tempo=Math.min((naechst-e)/.016*.55,1)*UNSCHAERFE;
 
-      kam.style.setProperty('--z',(NAEHE+(1-NAEHE)*e).toFixed(4));
-      kam.style.filter=tempo>.05?'blur('+(tempo*7).toFixed(2)+'px)':'';
-      str.style.setProperty('--streak',tempo.toFixed(3));
-      /* ab dem Uebergang blendet das Overlay aus und gibt den Hero frei */
-      ov.style.opacity=t<UEBERGANG?1:(1-(t-UEBERGANG)/(1-UEBERGANG)).toFixed(3);
+      setzen(e,tempo);
+      grund.style.opacity=t<UEBERGANG?1:(1-(t-UEBERGANG)/(1-UEBERGANG)).toFixed(3);
 
-      if(t<1)raf=requestAnimationFrame(bild); else weg();
+      if(t<1)raf=requestAnimationFrame(bild); else landen();
     }
     raf=requestAnimationFrame(bild);
   })();
